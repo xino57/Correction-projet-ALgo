@@ -1,23 +1,24 @@
-//======================================================================== Correction======================================================================
-
 /*int: nbLigne, nbColonne, nbObstacle
 ptDepart, ptArrive: {x;y}*/
 
-let symboleCase = "&#x2610;";
-let symboleObstacle = "&#x25A0;";
-let symboleDepart = "&#x1F22F;";
-let symboleArrive = "&#x1F232;";
-let symboleChemin = "&#x1F201;";
+// Définition des symboles utilisés pour représenter les différentes cases de la grille
+let symboleCase = "&#x2610;"; // case vide
+let symboleObstacle = "&#x25A0;"; // case avec un obstacle
+let symboleDepart = "&#x1F22F;"; // case de départ
+let symboleArrive = "&#x1F232;"; // case d'arrivée
+let symboleChemin = "&#x1F201;"; // case faisant partie du chemin trouvé
 
+// Génération aléatoire des dimensions de la grille (nbLigne x nbColonne) et des positions de départ et d'arrivée
+let x = aleatoire(10, 15); // nombre de colonnes
+let y = aleatoire(10,20); // nombre de lignes
 
-let x = aleatoire(10, 15);
-let y = aleatoire(10,20);
-
+// position de départ
 let depart = {
         "x" : aleatoire(0,x-1),
         "y" : aleatoire(0,y-1)
         }
 
+// position d'arrivée
 let arrive={};
 do {
         arrive = {
@@ -27,10 +28,15 @@ do {
         
 } while (arrive["x"]==depart["x"] && arrive["y"]==depart["y"]);
 
-
+// Initialisation de la grille avec des cases vides et placement des symboles de départ et d'arrivée
 let grille=init(x,y, depart, arrive);
+
+
+// Affichage de la grille initiale
 afficher(grille)
 
+
+// Définition de la fonction init qui permet d'initialiser la grille avec les symboles de départ et d'arrivée
 function init(nbColonne, nbLigne,  ptDepart, ptArrive, nbObstacle=0){
         let plateau=[];
         for(let i=0; i<nbColonne;i++){
@@ -42,67 +48,74 @@ function init(nbColonne, nbLigne,  ptDepart, ptArrive, nbObstacle=0){
 
         }
 
-        plateau[ptDepart["x"]][ptDepart["y"]]= symboleDepart;
-        plateau[ptArrive["x"]][ptArrive["y"]]= symboleArrive;
+        plateau[ptDepart["x"]][ptDepart["y"]]= symboleDepart; // Placement du symbole de départ
+        plateau[ptArrive["x"]][ptArrive["y"]]= symboleArrive; // Placement du symbole d'arrivée
 
 
-        return plateau
+        return plateau // Retourne la grille initiale
 }
+// Définition de la fonction findPath qui permet de trouver le chemin entre le point de départ et le point d'arrivée
+function findPath(grille) {
 
-function findPath(plateau) {
-        let differencey = arrive.y - depart.y;
-        let differencex = arrive.x - depart.x;
+  let differencey = arrive.y - depart.y;
+   // Différence de coordonnées en y entre le point de départ et le point d'arrivée
+  let differencex = arrive.x - depart.x; 
+  // Différence de coordonnées en x entre le point de départ et le point d'arrivée
+
+        // point de distance entre l'arrivé est le départ
         let pointD = {
           "x": aleatoire(0, x - 1),
           "y": aleatoire(0, y - 1)
         };
-        
-        console.log(pointD);
-        console.log(differencey, differencex);
 
-        for (let i = 0; i < x; i++) {
-          plateau[i] = [];
-          for (let j = 0; j < y; j++) {
-            plateau[i][j] = 0; 
-          }
-        }
+        console.log(pointD)
 
-        //plateau1[arrive.x][arrive.y] = symboleArrive;
-        
-        while (differencex != 0 || differencey != 0) {
-          
-          plateau1[depart.x][depart.y] = symboleChemin;
-          
-          if (differencex < 0) {
-            differencex++;
-            depart.x--;
-            plateau1[depart.x][differencex] = symboleChemin;
+   // On crée un nouveau chemin
+   let chemin = [];
+   chemin[0] = {x: depart.x, y: depart.y};
+   let index = 0;
+ 
+   // Boucle While qui permet de se déplacer jusqu'à arriver à la destination
+   while (differencex != 0 || differencey != 0) {
+ 
+     // Déplacement horizontal
 
-          } else if (differencex > 0) {
-            differencex--;
-            depart.x++;
-            plateau1[depart.x][differencex] = symboleChemin;
-          } 
+     if (differencex < 0) {
+       depart.x--;
+       differencex++;
+     } else if (differencex > 0) {
+       depart.x++;
+       differencex--;
+     }
+     // Déplacement vertical
 
-          if (differencey < 0) {
-            differencey++;
-            depart.y--;
-            plateau1[depart.y][differencey] = symboleChemin;
+     else if (differencey < 0) {
+       depart.y--;
+       differencey++;
+     } else if (differencey > 0) {
+       depart.y++;
+       differencey--;
+     }
+ 
+     // Ajout du point courant au chemin
 
-          } else if (differencey > 0) {
-            differencey--;
-            depart.y++;
-            plateau1[depart.y][differencey] = symboleChemin;
-          }
-        }
-        return plateau;
-        
-      }
+     index++;
+     chemin[index] = {x: depart.x, y: depart.y};
+   }
+ 
+   // Ajout des symboles de chemin sur la grille
+   
+   for (let i = 0; i < taille(chemin); i++) {
+     grille[chemin[i].x][chemin[i].y] = symboleChemin;
+   }
+ 
+   afficher(grille);
+ }
       
 
 function displayPath(){
 }
 
-afficher(findPath(plateau));
+findPath(grille);
 
-displayPath();
+
